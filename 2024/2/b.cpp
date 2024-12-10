@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -28,8 +29,8 @@ std::vector<std::vector<int>> read(std::fstream& file) {
 bool is_report_safe(const std::vector<int>& report) {
     int sign = 0;
     for (auto i = 0; i < static_cast<ssize_t>(report.size()) - 1; i++) {
-        int a = report.at(i);
-        int b = report.at(i + 1);
+        int a = report[i];
+        int b = report[i + 1];
 
         int diff = b - a;
         if (!(std::abs(diff) <= 3 and std::abs(diff) >= 1)) return false;
@@ -45,15 +46,15 @@ bool is_report_safe(const std::vector<int>& report) {
 
 bool is_dampened_report_safe(const std::vector<int>& report) {
     bool safe = false;
-
-    ssize_t len = report.size();
+    const auto len = static_cast<ssize_t>(report.size());
     for (auto i = 0; i < len; i++) {
         if (safe) break;
 
         std::vector<int> dampened_report;
         for (auto j = 0; j < len; j++) {
             if (j == i) continue;
-            dampened_report.emplace_back(report.at(j));
+
+            dampened_report.emplace_back(report[j]);
         }
         if (!safe) safe = is_report_safe(dampened_report);
     }
@@ -70,14 +71,18 @@ int solve(const std::vector<std::vector<int>>& reports) {
 
 int main() {
     static_assert(__cplusplus >= 201700L, "C++ version is not 17 or above");
-    std::fstream f("2/input.txt", std::ios::in);
+    std::fstream f("input.txt", std::ios::in);
 
     if (!f.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
         return 1;
     }
 
-    const auto reports = read(f);
+    const auto&& reports = read(f);
+    auto start = std::chrono::high_resolution_clock::now();
     std::cout << solve(reports) << "\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    std::cout << "Elapsed time: " << duration << " μs\n";
     return 0;
 }

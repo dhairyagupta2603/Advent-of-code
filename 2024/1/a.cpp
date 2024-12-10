@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <cmath>
+#include <execution>
 #include <fstream>
 #include <iostream>
 #include <numeric>
@@ -19,16 +21,16 @@ std::pair<std::vector<int>, std::vector<int>> read(std::fstream& file) {
     return lists;
 }
 
-long long solve(std::vector<int> a, std::vector<int> b) {
+long long solve(std::vector<int>& a, std::vector<int>& b) {
     assert((a.size() == b.size()) and "a and b are not same size");
 
     std::sort(a.begin(), a.end());
     std::sort(b.begin(), b.end());
 
-    ssize_t len = a.size();
+    const auto len = static_cast<ssize_t>(a.size());
     long long result = 0;
     for (auto i = 0; i < len; i++) {
-        result += static_cast<long long>(std::abs(a.at(i) - b.at(i)));
+        result += static_cast<long long>(std::abs(a[i] - b[i]));
     }
     return result;
 }
@@ -42,7 +44,11 @@ int main() {
         return 1;
     }
 
-    const auto& [a, b] = read(f);
+    auto&& [a, b] = read(f);
+    auto start = std::chrono::high_resolution_clock::now();
     std::cout << solve(a, b) << "\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    std::cout << "Elapsed time: " << duration << " μs\n";
     return 0;
 }

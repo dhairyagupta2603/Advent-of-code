@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <regex>
@@ -18,14 +19,14 @@ void multiply(std::fstream& file, char ch, long long& result) {
         file.get();
     }
 
-    std::string mul(buf.data(), buf.size());
+    const std::string mul(buf.data(), buf.size());
 
     // search for mul
-    std::regex mul_pattern("mul\\([0-9]{1,3},[0-9]{1,3}\\)");
+    const std::regex mul_pattern("mul\\([0-9]{1,3},[0-9]{1,3}\\)");
     std::smatch mul_matched;
     if (std::regex_search(mul, mul_matched, mul_pattern)) {
         // serch for numbers in mul
-        std::regex num_pattern("[0-9]{1,3}");
+        const std::regex num_pattern("[0-9]{1,3}");
         std::string mul_str = mul_matched.str();
         std::smatch num_matched;
 
@@ -58,13 +59,16 @@ long long solve(std::fstream& file) {
 
 int main() {
     static_assert(__cplusplus >= 201700L, "C++ version is not 17 or above");
-    std::fstream f("3/input.txt", std::ios::in);
+    std::fstream f("input.txt", std::ios::in);
 
     if (!f.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
         return 1;
     }
-
+    auto start = std::chrono::high_resolution_clock::now();
     std::cout << solve(f) << "\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "Elapsed time: " << duration << " ms\n";
     return 0;
 }

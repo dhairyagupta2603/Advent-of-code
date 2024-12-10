@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <regex>
@@ -83,13 +84,17 @@ long long solve(std::fstream& file) {
 
 int main() {
     static_assert(__cplusplus >= 201700L, "C++ version is not 17 or above");
-    std::fstream f("3/input.txt", std::ios::in);
+    std::fstream f("input.txt", std::ios::in);
 
     if (!f.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
         return 1;
     }
 
+    auto start = std::chrono::high_resolution_clock::now();
     std::cout << solve(f) << "\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "Elapsed time: " << duration << " ms\n";
     return 0;
 }
