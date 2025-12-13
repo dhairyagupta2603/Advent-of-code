@@ -2,4 +2,6 @@
 name = "AoC-2025"
 version = "1.0.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "z3-solver>=4.15.4.0",
+]
